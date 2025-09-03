@@ -45,9 +45,14 @@ The application exposes a web interface for managing and monitoring business pro
   ```
 
 ### Accessing the Application:
-- **Web Interface:** [http://localhost:8080](http://localhost:8080)
+- **Camunda Welcome:** [http://localhost:8081/camunda/app/welcome/default/](http://localhost:8081/camunda/app/welcome/default/)
+- **Camunda Tasklist:** [http://localhost:8081/camunda/app/tasklist/default/](http://localhost:8081/camunda/app/tasklist/default/)
+- **Camunda Cockpit:** [http://localhost:8081/camunda/app/cockpit/default/](http://localhost:8081/camunda/app/cockpit/default/)
+- **Camunda Admin:** [http://localhost:8081/camunda/app/admin/default/](http://localhost:8081/camunda/app/admin/default/)
+- **Swagger UI (API Docs):** [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+- **H2 Console (Database):** [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
+- **Camunda REST API:** [http://localhost:8081/engine-rest](http://localhost:8081/engine-rest)
 - **Admin Credentials:** `demo` / `demo`
-- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##  conventions Development Conventions
 
