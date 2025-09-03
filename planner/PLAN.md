@@ -25,6 +25,7 @@
 - Swagger / OpenAPI
   - Dependência: `org.springdoc:springdoc-openapi-starter-webmvc-ui`.
   - URL de acesso: `/swagger-ui/index.html`.
+  - incluir no escopo um lembrete para habilitar o endpoint de docs JSON (/v3/api-docs), que é o que alimenta o Swagger UI.
   - Incluir schemas e exemplos de requests/responses para os principais cenários (202, 4xx, 5xx).
 
 - Validação
@@ -35,7 +36,9 @@
       - `@Min(0)` em `payload.idade`.
 
 - Process Key
-  - Confirmar que o atributo `id` do processo BPMN não contém espaços.
+  - Confirmar que o atributo `id` 
+  - Acrescente businessKey com o `id` 
+  - reforçar a diferença entre id (usado no startProcessInstanceByKey) e name (visível no Cockpit).
   - Se necessário, renomear para `demo-ai-project-crud` e manter o atributo `name` como **"Demo AI Project - CRUD"**.
  
 - DB & Scripts
@@ -52,7 +55,8 @@
   - Estabelecer critério de aceite de cobertura mínima e cenários obrigatórios.
 
 - Observabilidade
-  - Adicionar logs contendo `correlationId` e `processInstanceId` em cada delegate e nas entr
+  - Adicionar logs contendo `correlationId` e `processInstanceId` em cada delegate e nas entradas e saidas das tarefas
+  - Adicione o BusinessKey
 
 ## Fase 1 — Banco de dados
 - Criar `schema.sql` em `src/main/resources` para a tabela **AIC_CADASTRO**:
