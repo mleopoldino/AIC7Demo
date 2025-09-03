@@ -47,6 +47,7 @@ The application exposes a web interface for managing and monitoring business pro
 ### Accessing the Application:
 - **Web Interface:** [http://localhost:8080](http://localhost:8080)
 - **Admin Credentials:** `demo` / `demo`
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##  conventions Development Conventions
 
