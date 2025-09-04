@@ -14,3 +14,4 @@ com/mls/workflow/core/service/CadastroService$1.class
 com/mls/workflow/core/dto/CadastroDto.class
 com/mls/workflow/camunda/delegate/ReadDelegate.class
 com/mls/workflow/config/GlobalExceptionHandler.class
+com/mls/workflow/config/DatabaseInitializerConfig.class
