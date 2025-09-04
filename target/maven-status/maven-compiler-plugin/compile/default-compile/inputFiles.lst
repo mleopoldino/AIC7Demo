@@ -1,4 +1,9 @@
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/Application.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/CreateDelegate.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/DeleteDelegate.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/IdentificarTarefaDelegate.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/ReadDelegate.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/UpdateDelegate.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/controller/ProcessController.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/CadastroDto.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/PayloadDto.java

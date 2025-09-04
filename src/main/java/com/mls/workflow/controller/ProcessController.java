@@ -7,16 +7,28 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cadastro")
 @Tag(name = "Process Controller", description = "Endpoints for starting and managing BPMN processes.")
 public class ProcessController {
+
+    private final RuntimeService runtimeService;
+
+    @Autowired
+    public ProcessController(RuntimeService runtimeService) {
+        this.runtimeService = runtimeService;
+    }
 
     @PostMapping("/process")
     @Operation(summary = "Start a CRUD process instance",
@@ -28,13 +40,21 @@ public class ProcessController {
                     @ApiResponse(responseCode = "400", description = "Invalid request payload"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             })
-    public ResponseEntity<ProcessResponseDto> startProcess(@RequestBody ProcessRequestDto request) {
-        // This is a stub. The actual process starting logic will be implemented in Phase 6.
-        // For now, we return a dummy response.
-        String processInstanceId = UUID.randomUUID().toString();
+    public ResponseEntity<ProcessResponseDto> startProcess(@Valid @RequestBody ProcessRequestDto request) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("tarefa", request.getTarefa());
+        variables.put("id", request.getId());
+        variables.put("payload", request.getPayload()); // PayloadDto will be serialized as a Map
+
         String businessKey = request.getId() != null ? String.valueOf(request.getId()) : null;
 
-        ProcessResponseDto response = new ProcessResponseDto(processInstanceId, businessKey);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
+                "DemoAIProjectCRUDProcess", // Process Definition Key (ID from BPMN file)
+                businessKey,
+                variables
+        );
+
+        ProcessResponseDto response = new ProcessResponseDto(processInstance.getId(), processInstance.getBusinessKey());
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }

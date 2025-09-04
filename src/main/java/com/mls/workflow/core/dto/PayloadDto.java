@@ -1,16 +1,23 @@
 package com.mls.workflow.core.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Data payload for the resource.")
 public class PayloadDto {
 
-    @Schema(description = "Name of the user.", example = "John Doe")
+    @NotBlank(message = "Name cannot be blank")
+    @Schema(description = "Name of the user.", example = "John Doe", requiredMode = Schema.RequiredMode.REQUIRED)
     private String nome;
 
-    @Schema(description = "Email of the user.", example = "john.doe@example.com")
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email should be valid")
+    @Schema(description = "Email of the user.", example = "john.doe@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
+    @Min(value = 0, message = "Age cannot be negative")
     @Schema(description = "Age of the user.", example = "30")
     private int idade;
 

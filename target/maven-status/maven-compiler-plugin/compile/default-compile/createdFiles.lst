@@ -1,8 +1,13 @@
 com/mls/workflow/controller/ProcessController.class
-com/mls/workflow/Application.class
 com/mls/workflow/core/service/CadastroService.class
+com/mls/workflow/camunda/delegate/CreateDelegate.class
+com/mls/workflow/core/dto/ProcessRequestDto.class
+com/mls/workflow/camunda/delegate/UpdateDelegate.class
+com/mls/workflow/core/dto/ProcessResponseDto.class
+com/mls/workflow/camunda/delegate/IdentificarTarefaDelegate.class
+com/mls/workflow/camunda/delegate/DeleteDelegate.class
+com/mls/workflow/Application.class
 com/mls/workflow/core/dto/PayloadDto.class
 com/mls/workflow/core/service/CadastroService$1.class
-com/mls/workflow/core/dto/ProcessRequestDto.class
 com/mls/workflow/core/dto/CadastroDto.class
-com/mls/workflow/core/dto/ProcessResponseDto.class
+com/mls/workflow/camunda/delegate/ReadDelegate.class

@@ -162,7 +162,7 @@ Deve direcionar para tratamento de “Operação inválida”.</bpmn:documentati
     <bpmn:sequenceFlow id="CreateSequenceFlow" name="Create" sourceRef="TipoTarefaSolicitadaGateway" targetRef="CREATETask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "CREATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0qtmrq3" sourceRef="CREATETask" targetRef="GatewayJoin" />
+    <bpmn:sequenceFlow id="Flow_0qtmrq3" sourceRef="CREATETask" targetRef="Event_0850x8l" />
     <bpmn:sequenceFlow id="ReadSequenceFlow" name="Read" sourceRef="TipoTarefaSolicitadaGateway" targetRef="READTask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "READ"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -173,16 +173,16 @@ Deve direcionar para tratamento de “Operação inválida”.</bpmn:documentati
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "DELETE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="GatewayJoin">
-      <bpmn:incoming>Flow_0qtmrq3</bpmn:incoming>
-      <bpmn:incoming>Flow_0go8x0z</bpmn:incoming>
-      <bpmn:incoming>Flow_0mf7bw0</bpmn:incoming>
-      <bpmn:incoming>Flow_0xsodm3</bpmn:incoming>
+      <bpmn:incoming>Flow_0feqy92</bpmn:incoming>
+      <bpmn:incoming>Flow_1poflc3</bpmn:incoming>
+      <bpmn:incoming>Flow_0r3aiyk</bpmn:incoming>
+      <bpmn:incoming>Flow_0ddmezd</bpmn:incoming>
       <bpmn:outgoing>Flow_0wt3ckm</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0wt3ckm" sourceRef="GatewayJoin" targetRef="RecursoProcessadoEndEvent" />
-    <bpmn:sequenceFlow id="Flow_0go8x0z" sourceRef="READTask" targetRef="GatewayJoin" />
-    <bpmn:sequenceFlow id="Flow_0mf7bw0" sourceRef="UPDATETask" targetRef="GatewayJoin" />
-    <bpmn:sequenceFlow id="Flow_0xsodm3" sourceRef="DELETETask" targetRef="GatewayJoin" />
+    <bpmn:sequenceFlow id="Flow_0go8x0z" sourceRef="READTask" targetRef="Event_1nc0ity" />
+    <bpmn:sequenceFlow id="Flow_0mf7bw0" sourceRef="UPDATETask" targetRef="Event_1d2hkho" />
+    <bpmn:sequenceFlow id="Flow_0xsodm3" sourceRef="DELETETask" targetRef="Event_1hjti9i" />
     <bpmn:serviceTask id="CREATETask" name="CREATE" camunda:delegateExpression="${createDelegate}">
       <bpmn:documentation>Service Task – CREATE
 
@@ -295,6 +295,38 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
       <bpmn:incoming>OperacaoInvalidaSequenceFlow</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="OperacaoInvalidaSequenceFlow" name="Operação Invalida" sourceRef="TipoTarefaSolicitadaGateway" targetRef="OperacaoInvalidaEndEvent" />
+    <bpmn:sequenceFlow id="Flow_0feqy92" sourceRef="Event_0850x8l" targetRef="GatewayJoin" />
+    <bpmn:intermediateCatchEvent id="Event_0850x8l">
+      <bpmn:incoming>Flow_0qtmrq3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0feqy92</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0x286eo">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1poflc3" sourceRef="Event_1nc0ity" targetRef="GatewayJoin" />
+    <bpmn:intermediateCatchEvent id="Event_1nc0ity">
+      <bpmn:incoming>Flow_0go8x0z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1poflc3</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1ogpvs1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0r3aiyk" sourceRef="Event_1d2hkho" targetRef="GatewayJoin" />
+    <bpmn:intermediateCatchEvent id="Event_1d2hkho">
+      <bpmn:incoming>Flow_0mf7bw0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r3aiyk</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1dw0mkg">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0ddmezd" sourceRef="Event_1hjti9i" targetRef="GatewayJoin" />
+    <bpmn:intermediateCatchEvent id="Event_1hjti9i">
+      <bpmn:incoming>Flow_0xsodm3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ddmezd</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1hryufb">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DemoAIProjectCRUDProcess">
@@ -313,15 +345,6 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
           <dc:Bounds x="433" y="62" width="55" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="RecursoProcessadoEndEvent">
-        <dc:Bounds x="832" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="821" y="142" width="59" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1j0wo5c_di" bpmnElement="GatewayJoin" isMarkerVisible="true">
-        <dc:Bounds x="735" y="92" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1a37hss_di" bpmnElement="CREATETask">
         <dc:Bounds x="590" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -334,10 +357,31 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
       <bpmndi:BPMNShape id="Activity_0xj2qu3_di" bpmnElement="DELETETask">
         <dc:Bounds x="590" y="420" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_102nsqh_di" bpmnElement="OperacaoInvalidaEndEvent">
-        <dc:Bounds x="742" y="542" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="RecursoProcessadoEndEvent">
+        <dc:Bounds x="1042" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="716" y="585" width="89" height="14" />
+          <dc:Bounds x="1031" y="142" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1j0wo5c_di" bpmnElement="GatewayJoin" isMarkerVisible="true">
+        <dc:Bounds x="865" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0l4eang_di" bpmnElement="Event_0850x8l">
+        <dc:Bounds x="752" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sgyxmn_di" bpmnElement="Event_1nc0ity">
+        <dc:Bounds x="752" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lwg7x6_di" bpmnElement="Event_1d2hkho">
+        <dc:Bounds x="752" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_165hqeg_di" bpmnElement="Event_1hjti9i">
+        <dc:Bounds x="752" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_102nsqh_di" bpmnElement="OperacaoInvalidaEndEvent">
+        <dc:Bounds x="752" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="726" y="585" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
@@ -357,7 +401,7 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qtmrq3_di" bpmnElement="Flow_0qtmrq3">
         <di:waypoint x="690" y="117" />
-        <di:waypoint x="735" y="117" />
+        <di:waypoint x="752" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0807ecl_di" bpmnElement="ReadSequenceFlow">
         <di:waypoint x="460" y="142" />
@@ -384,31 +428,47 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wt3ckm_di" bpmnElement="Flow_0wt3ckm">
-        <di:waypoint x="785" y="117" />
-        <di:waypoint x="832" y="117" />
+        <di:waypoint x="915" y="117" />
+        <di:waypoint x="1042" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0go8x0z_di" bpmnElement="Flow_0go8x0z">
         <di:waypoint x="690" y="240" />
-        <di:waypoint x="760" y="240" />
-        <di:waypoint x="760" y="142" />
+        <di:waypoint x="752" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mf7bw0_di" bpmnElement="Flow_0mf7bw0">
         <di:waypoint x="690" y="350" />
-        <di:waypoint x="760" y="350" />
-        <di:waypoint x="760" y="142" />
+        <di:waypoint x="752" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xsodm3_di" bpmnElement="Flow_0xsodm3">
         <di:waypoint x="690" y="460" />
-        <di:waypoint x="760" y="460" />
-        <di:waypoint x="760" y="142" />
+        <di:waypoint x="752" y="460" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0h86li4_di" bpmnElement="OperacaoInvalidaSequenceFlow">
         <di:waypoint x="460" y="142" />
         <di:waypoint x="460" y="560" />
-        <di:waypoint x="742" y="560" />
+        <di:waypoint x="752" y="560" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="505" y="533" width="90" height="14" />
+          <dc:Bounds x="508" y="533" width="90" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0feqy92_di" bpmnElement="Flow_0feqy92">
+        <di:waypoint x="788" y="117" />
+        <di:waypoint x="865" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1poflc3_di" bpmnElement="Flow_1poflc3">
+        <di:waypoint x="788" y="240" />
+        <di:waypoint x="890" y="240" />
+        <di:waypoint x="890" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r3aiyk_di" bpmnElement="Flow_0r3aiyk">
+        <di:waypoint x="788" y="350" />
+        <di:waypoint x="890" y="350" />
+        <di:waypoint x="890" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ddmezd_di" bpmnElement="Flow_0ddmezd">
+        <di:waypoint x="788" y="460" />
+        <di:waypoint x="890" y="460" />
+        <di:waypoint x="890" y="142" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
