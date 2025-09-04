@@ -4,14 +4,14 @@ Este arquivo fornece orientação ao Claude Code (claude.ai/code) quando trabalh
 
 ## Visão Geral do Projeto
 
-Este é um projeto de demonstração de workflow Camunda BPM construído com Spring Boot 3.4.4 e Camunda BPM 7.23.0. O projeto demonstra integração de IA com gerenciamento de processos de negócio.
+Este é um projeto de demonstração de workflow Camunda BPM construído com Spring Boot 3.3.0 e Camunda BPM 7.23.0. O projeto demonstra integração de IA com gerenciamento de processos de negócio através de um endpoint REST que orquestra operações CRUD via BPMN.
 
 ## Stack Tecnológica
 
 ### Linguagem e Plataforma
 - **Java**: 21 (source e target compatibility)
 - **Build Tool**: Maven 3.x
-- **Framework**: Spring Boot 3.4.4
+- **Framework**: Spring Boot 3.3.0
 
 ### Dependências Principais
 - **Camunda BPM**: 7.23.0 (Spring Boot Starter REST e Web App)
@@ -22,7 +22,7 @@ Este é um projeto de demonstração de workflow Camunda BPM construído com Spr
 
 ### Dependências de Gerenciamento
 ```xml
-- Spring Boot Dependencies BOM: 3.4.4
+- Spring Boot Dependencies BOM: 3.3.0
 - Camunda BOM: 7.23.0
 ```
 
@@ -133,10 +133,12 @@ http://localhost:8081/actuator/metrics
 - **URL**: jdbc:h2:file:./camunda-h2-database
 
 ### Detalhes do Workflow
-O projeto inclui um processo BPMN simples (`aic7demo-process`) com:
-- Evento de início
-- Uma tarefa de usuário "Break Point 1" atribuída ao usuário "demo"
-- Evento de fim
+O projeto inclui um processo BPMN completo (`DemoAIProjectCRUDProcess`) com:
+- Evento de início que recebe variáveis (tarefa, id, payload)
+- Service Task de identificação (`IdentificarTarefaDelegate`)
+- Gateway exclusivo que roteia para CREATE/READ/UPDATE/DELETE
+- Service Tasks específicos para cada operação CRUD
+- Fluxo default para operações inválidas
 - TTL de histórico de 180 dias
 
 ## Convenções de Código
@@ -164,7 +166,7 @@ O projeto inclui um processo BPMN simples (`aic7demo-process`) com:
 1. Certifique-se de ter Java 21 instalado
 2. Clone o repositório e execute `mvn clean compile`
 3. Execute `mvn spring-boot:run` para iniciar a aplicação
-4. Acesse http://localhost:8080 com credenciais demo/demo
+4. Acesse http://localhost:8081 com credenciais demo/demo
 
 ### Adicionando Novos Processos
 1. Crie arquivos .bpmn em `src/main/resources/bpmn/`
@@ -251,3 +253,34 @@ curl -X POST http://localhost:8081/api/cadastro/process \
 - Configure external task workers em `camunda.external`  
 - Adicione serviços de negócio em `core.service`
 - Estenda validações em `core.validation`
+
+## Correções Críticas Implementadas
+
+### JSON Binding (Setembro 2024)
+**⚠️ IMPORTANTE:** Os DTOs utilizam `@JsonProperty` annotations para mapeamento correto JSON → Java:
+
+```java
+// ProcessRequestDto
+@JsonProperty("tarefa") private String tarefa;
+@JsonProperty("id") private Long id;  
+@JsonProperty("payload") private PayloadDto payload;
+
+// PayloadDto  
+@JsonProperty("nome") private String nome;
+@JsonProperty("email") private String email;
+@JsonProperty("idade") private int idade;
+```
+
+**Problema Resolvido:** Campo `tarefa` não estava sendo mapeado corretamente do JSON, causando erro de validação "Operation type (tarefa) cannot be blank" mesmo com dados válidos.
+
+### Validação Customizada
+- `@ValidProcessRequest` ativo para validação condicional
+- `id` obrigatório para READ/UPDATE/DELETE  
+- `payload` obrigatório para CREATE/UPDATE
+- Bean Validation ativo em todos os DTOs
+
+### Testes Corrigidos
+- ProcessControllerIntegrationTest: removidos mocks incorretos
+- Adicionados testes específicos de JSON deserialization
+- Criado PayloadDtoValidationTest para validação completa
+- Todos os testes unitários passando

@@ -1,2 +1,8 @@
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/bpmn/CrudProcessTest.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/camunda/delegate/IdentificarTarefaDelegateTest.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/controller/ProcessControllerIT.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/controller/ProcessControllerIntegrationTest.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/controller/ProcessControllerTest.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/core/dto/PayloadDtoValidationTest.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/core/dto/ProcessRequestValidationTest.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/test/java/com/mls/workflow/core/service/CadastroServiceTest.java

@@ -1,24 +1,30 @@
 package com.mls.workflow.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mls.workflow.core.validation.ValidProcessRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Schema(description = "Request to start a CRUD process instance.")
-//@ValidProcessRequest  // Temporarily disabled for debugging
+@ValidProcessRequest
 public class ProcessRequestDto {
 
     @NotBlank(message = "Operation type (tarefa) cannot be blank")
     @Schema(description = "The type of CRUD operation to perform.", example = "CREATE", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Pattern(regexp = "CREATE|READ|UPDATE|DELETE", message = "tarefa must be one of CREATE, READ, UPDATE, DELETE")
+    @JsonProperty("tarefa")
     private String tarefa;
 
     @Schema(description = "The ID of the resource for READ, UPDATE, DELETE operations.", example = "123")
+    @JsonProperty("id")
     private Long id; // Not @NotNull here, as it's conditional based on 'tarefa'
 
     @Valid // Enable nested validation for PayloadDto
     @Schema(description = "The data payload for CREATE and UPDATE operations.")
+    @JsonProperty("payload")
     private PayloadDto payload; // Not @NotNull here, as it's conditional based on 'tarefa'
 
     public ProcessRequestDto() {

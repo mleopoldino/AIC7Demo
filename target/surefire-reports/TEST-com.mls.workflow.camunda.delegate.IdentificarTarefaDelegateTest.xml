@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.mls.workflow.controller.ProcessControllerTest" time="0.539" tests="7" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.mls.workflow.camunda.delegate.IdentificarTarefaDelegateTest" time="0.393" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="24"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -48,7 +48,7 @@
     <property name="localRepository" value="/Users/marcelo/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
     <property name="java.io.tmpdir" value="/var/folders/04/qyd8wrd97qsd5w1rpqy1sw5c0000gn/T/"/>
-    <property name="com.zaxxer.hikari.pool_number" value="2"/>
+    <property name="com.zaxxer.hikari.pool_number" value="1"/>
     <property name="java.version" value="24.0.2"/>
     <property name="user.dir" value="/Users/marcelo/eclipse-workspace/AIC7Demo"/>
     <property name="os.arch" value="x86_64"/>
@@ -65,40 +65,10 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="68.0"/>
   </properties>
-  <testcase name="testStartProcess_TarefaUpsert_ShouldReturn400" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.103">
-    <system-out><![CDATA[2025-09-04T02:11:19.205-03:00  INFO 12780 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.mls.workflow.controller.ProcessControllerTest]: ProcessControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2025-09-04T02:11:19.217-03:00  INFO 12780 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.mls.workflow.Application for test class com.mls.workflow.controller.ProcessControllerTest
-
- ____                                 _         ____  _       _    __                      
-/ ___| __ _ _ __ ___  _   _ _ __   __| | __ _  |  _ \| | __ _| |_ / _| ___  _ __ _ __ ___  
-| |   / _` | '_ ` _ \| | | | '_ \ / _` |/ _` | | |_) | |/ _` | __| |_ / _ \| '__| '_ ` _ \ 
-| |__| (_| | | | | | | |_| | | | | (_| | (_| | |  __/| | (_| | |_|  _| (_) | |  | | | | | |
-\____/\__,_|_| |_| |_|\__,_|_| |_|\__,_|\__,_| |_|   |_|\__,_|\__|_|  \___/|_|  |_| |_| |_|
-
-  Spring-Boot:  (v3.3.0)
-  Camunda Platform: (v7.23.0)
-  Camunda Platform Spring Boot Starter: (v7.23.0)
-
-2025-09-04T02:11:19.255-03:00  INFO 12780 --- [           main] c.m.w.controller.ProcessControllerTest   : Starting ProcessControllerTest using Java 24.0.2 with PID 12780 (started by marcelo in /Users/marcelo/eclipse-workspace/AIC7Demo)
-2025-09-04T02:11:19.255-03:00 DEBUG 12780 --- [           main] c.m.w.controller.ProcessControllerTest   : Running with Spring Boot v3.3.0, Spring v6.1.8
-2025-09-04T02:11:19.255-03:00  INFO 12780 --- [           main] c.m.w.controller.ProcessControllerTest   : No active profile set, falling back to 1 default profile: "default"
-2025-09-04T02:11:19.377-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Creating new transaction with name [null]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
-2025-09-04T02:11:19.377-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Acquired Connection [HikariProxyConnection@1230091137 wrapping conn0: url=jdbc:h2:mem:testdb user=SA] for JDBC transaction
-2025-09-04T02:11:19.378-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Switching JDBC Connection [HikariProxyConnection@1230091137 wrapping conn0: url=jdbc:h2:mem:testdb user=SA] to manual commit
-2025-09-04T02:11:19.381-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Initiating transaction commit
-2025-09-04T02:11:19.381-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Committing JDBC transaction on Connection [HikariProxyConnection@1230091137 wrapping conn0: url=jdbc:h2:mem:testdb user=SA]
-2025-09-04T02:11:19.381-03:00 DEBUG 12780 --- [ingJobExecutor]] o.s.jdbc.support.JdbcTransactionManager  : Releasing JDBC Connection [HikariProxyConnection@1230091137 wrapping conn0: url=jdbc:h2:mem:testdb user=SA] after transaction
-2025-09-04T02:11:19.465-03:00  INFO 12780 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@60d4269a, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1bc14017, org.springframework.security.web.context.SecurityContextHolderFilter@5c84805a, org.springframework.security.web.header.HeaderWriterFilter@4f6cf902, org.springframework.web.filter.CorsFilter@33c109d2, org.springframework.security.web.csrf.CsrfFilter@16ae647d, org.springframework.security.web.authentication.logout.LogoutFilter@30f1487d, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@3ecf180, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@76ba2139, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@72dfac2e, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@b82ce8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@39ec9a3b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5eb66704, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@337eb419, org.springframework.security.web.access.ExceptionTranslationFilter@7843efc5, org.springframework.security.web.access.intercept.AuthorizationFilter@3391a67f]
-2025-09-04T02:11:19.475-03:00  INFO 12780 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
-2025-09-04T02:11:19.475-03:00  INFO 12780 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2025-09-04T02:11:19.475-03:00  INFO 12780 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2025-09-04T02:11:19.485-03:00  INFO 12780 --- [           main] c.m.w.controller.ProcessControllerTest   : Started ProcessControllerTest in 0.262 seconds (process running for 17.047)
+  <testcase name="shouldSetVariables" classname="com.mls.workflow.camunda.delegate.IdentificarTarefaDelegateTest" time="0.392">
+    <system-out><![CDATA[2025-09-04T02:11:15.712-03:00  INFO 12780 --- [           main] c.m.w.c.d.IdentificarTarefaDelegate      : [null] - Activity: null - Starting IdentificarTarefaDelegate for process instance: null with business key: {}
+2025-09-04T02:11:15.714-03:00  INFO 12780 --- [           main] c.m.w.c.d.IdentificarTarefaDelegate      : [null] - Activity: null - Valid operation: CREATE. Converting to uppercase.
+2025-09-04T02:11:15.715-03:00  INFO 12780 --- [           main] c.m.w.c.d.IdentificarTarefaDelegate      : [null] - Activity: null - Finished IdentificarTarefaDelegate for process instance: {}
 ]]></system-out>
   </testcase>
-  <testcase name="testStartProcess_ReadOperation_ShouldReturn202" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.097"/>
-  <testcase name="testStartProcess_DeleteOperation_ShouldReturn202" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.007"/>
-  <testcase name="should_return_202_on_valid_body_and_start_process" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.009"/>
-  <testcase name="testStartProcess_TarefaLowercase_ShouldReturn400" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.007"/>
-  <testcase name="testStartProcess_UpdateOperation_ShouldReturn202" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.009"/>
-  <testcase name="should_return_400_on_invalid_body_and_not_start_process" classname="com.mls.workflow.controller.ProcessControllerTest" time="0.01"/>
 </testsuite>

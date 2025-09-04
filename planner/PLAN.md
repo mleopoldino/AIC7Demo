@@ -137,14 +137,16 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 
 ---
 
-## Fase 7 — Testes
-- **Unitários**: camada de dados com H2.
-- **Integração**: endpoint REST via MockMvc.
-- **BPMN**: simular rotas com `camunda-bpm-assert-scenario`.
-- **Casos especiais**:
-    - `tarefa=null` → default flow.
-    - `tarefa="create"` (case mismatch) → default flow.
-    - `tarefa="UPSERT"` → default flow.
+## Fase 7 — Testes ✅ **COMPLETA**
+- ✅ **Unitários**: camada de dados com H2.
+- ✅ **Integração**: endpoint REST via MockMvc.
+- ✅ **JSON Binding**: testes específicos para @JsonProperty annotations.
+- ✅ **Validação**: testes Bean Validation para DTOs.
+- ✅ **Casos especiais**:
+    - ✅ `tarefa=null` → erro 400 com validação.
+    - ✅ `tarefa="create"` (case mismatch) → erro 400 com validação.
+    - ✅ `tarefa="UPSERT"` → erro 400 com validação.
+- ✅ **Correção de bugs**: ProcessControllerIntegrationTest corrigido.
 
 ---
 
@@ -203,6 +205,38 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 
 ---
 
+## ⚡ Correções Críticas Aplicadas (Setembro 2024)
+
+### 🐛 **Problema Original**
+- **Issue:** Campo `tarefa` retornando erro "Operation type (tarefa) cannot be blank" mesmo sendo enviado corretamente no JSON
+- **Causa:** Falta de `@JsonProperty` annotations nos DTOs para mapeamento JSON → DTO
+- **Impacto:** Endpoint principal `/api/cadastro/process` não funcionava
+
+### 🔧 **Correções Implementadas**
+1. **✅ JSON Binding Fix:**
+   - Adicionado `@JsonProperty("tarefa")` em ProcessRequestDto
+   - Adicionado `@JsonProperty("id")` e `@JsonProperty("payload")` em ProcessRequestDto  
+   - Adicionado `@JsonProperty` para todos os campos em PayloadDto (nome, email, idade)
+
+2. **✅ Testes Corrigidos:**
+   - Corrigido ProcessControllerIntegrationTest (removido mocks incorretos)
+   - Adicionado ProcessRequestValidationTest com testes de JSON deserialization
+   - Adicionado PayloadDtoValidationTest para validação completa
+
+3. **✅ Validação Habilitada:**
+   - Reativado `@ValidProcessRequest` em ProcessRequestDto
+   - Validação customizada funcionando corretamente
+
+### 🎯 **Resultados Validados**
+- ✅ `curl CREATE` → Status 202 com processInstanceId
+- ✅ `curl READ` → Status 202 com businessKey  
+- ✅ `curl` sem tarefa → Status 400 com erro correto
+- ✅ `curl` com tarefa inválida → Status 400 com validação
+- ✅ Todos os testes unitários passando
+- ✅ Aplicação rodando corretamente na porta 8081
+
+---
+
 ## Definição de Pronto (DoD)
 - ✅ Endpoint REST documentado e funcional.
 - ✅ BPMN validado com rotas + default flow.
@@ -215,7 +249,7 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 
 ## 📊 Status de Implementação
 
-### ✅ Fases Completas (0-10)
+### ✅ Fases Completas (0-10) + Correções Críticas
 - **Fase 0:** Preparação do ambiente 
 - **Fase 1:** Banco de dados H2 com schema.sql
 - **Fase 2:** BPMN processo CRUD com gateway exclusivo
@@ -223,7 +257,7 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 - **Fase 4:** Serviço de dados CadastroService
 - **Fase 5:** Delegates para todas operações CRUD
 - **Fase 6:** Controller com validações e Swagger
-- **Fase 7:** Testes unitários e integração
+- **Fase 7:** Testes unitários e integração + **Correção JSON Binding**
 - **Fase 8:** Observabilidade com Actuator e logs
 - **Fase 9:** Smoke test e documentação Swagger
 - **Fase 10:** Documentação completa README.md
@@ -239,4 +273,6 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 - 📖 **Documentação:** Swagger UI completo com exemplos
 - 🔍 **Observabilidade:** Logs detalhados + Actuator endpoints
 - ✅ **Validação:** Bean Validation + validação condicional customizada
-- 🧪 **Testes:** Unitários e integração implementados  
+- 🧪 **Testes:** Unitários e integração implementados
+- 🔧 **JSON Binding:** @JsonProperty annotations corretas para mapeamento DTO
+- 🛠️ **Correções:** Bugs de testes de integração resolvidos  

@@ -34,7 +34,7 @@ public class IdentificarTarefaDelegate implements JavaDelegate {
         } else {
             LOG.info("[{}] - Activity: {} - Valid operation: {}. Converting to uppercase.",
                     activityId, processInstanceId, tarefa);
-            execution.setVariable("tarefa", tarefa.toUpperCase());
+            execution.setVariable("tarefaNormalizada", tarefa.toUpperCase());
         }
         LOG.info("[{}] - Activity: {} - Finished IdentificarTarefaDelegate for process instance: {}",
                 activityId, processInstanceId);
