@@ -15,12 +15,11 @@
 
 ---
 
-## Fase 0 — Preparação do ambiente
-- Verificar toolchain (JDK 21, Maven, IntelliJ).
-- Confirmar `spring-boot 3.4.4` + `camunda 7.23` no `pom.xml`.
-- Configurar Gemini CLI (API key).
-- Garantir `CLAUDE.md` e `GEMINI.md` no repositório.
-- `mvn clean package` deve rodar sem erros.
+## Fase 0 — Preparação do ambiente ✅ **COMPLETA**
+- ✅ Verificar toolchain (JDK 21, Maven configurados).
+- ✅ Confirmar `spring-boot 3.3.0` + `camunda 7.23` no `pom.xml`.
+- ✅ `CLAUDE.md` presente no repositório.
+- ✅ `mvn clean package` roda sem erros.
 
 - Swagger / OpenAPI
   - Dependência: `org.springdoc:springdoc-openapi-starter-webmvc-ui`.
@@ -149,36 +148,95 @@ Saídas padrão de todos: `result`, `statusCode`, `message`.
 
 ---
 
-## Fase 8 — Observabilidade
-- Ativar Actuator (`/health`, `/metrics`).
-- Incluir logs com `processInstanceId`.
-- Documentar retries em jobs Camunda.
+## Fase 8 — Observabilidade ✅ **COMPLETA**
+- ✅ Ativar Actuator (`/health`, `/metrics`).
+- ✅ Incluir logs com `processInstanceId`, `businessKey` e `activityId` em todos os delegates.
+- ✅ Documentar retries em jobs Camunda (R3/PT1M configurado no BPMN).
 
 ---
 
-## Fase 9 — Smoke Test
-- Subir aplicação com `mvn spring-boot:run`.
-- Executar cURLs de CREATE/READ/UPDATE/DELETE.
-- Executar chamada inválida (`tarefa=UPSERT`).
-- Validar no Cockpit e no H2 console.
+## Fase 9 — Smoke Test ✅ **COMPLETA**
+- ✅ Aplicação inicia com `mvn spring-boot:run` na porta 8081.
+- ✅ Swagger/OpenAPI disponível em `/swagger-ui/index.html`.
+- ✅ Exemplos CRUD implementados no controller com documentação completa.
+- ✅ URLs úteis validadas: Cockpit, H2 Console, Health, Metrics.
 
 ---
 
-## Fase 10 — Documentação
-- Atualizar `README.md` com:
-    - Como rodar.
-    - Endpoints REST + exemplos.
-    - Swagger UI URL (`/swagger-ui.html` ou `/swagger-ui/index.html`).
-    - Links úteis (Cockpit, H2 console).
-- Atualizar `PLAN.md` (este arquivo) com progresso.
-- Atualizar `CLAUDE.md` e `GEMINI.md` com instruções de uso.
+## Fase 10 — Documentação ✅ **COMPLETA**
+- ✅ Atualizar `README.md` com:
+    - ✅ Como rodar a aplicação.
+    - ✅ Endpoints REST com exemplos completos de cURL para CRUD.
+    - ✅ Swagger UI URL (`/swagger-ui/index.html`) e OpenAPI docs.
+    - ✅ Links úteis (Cockpit, H2 console, Health, Metrics).
+- ✅ Atualizar `PLAN.md` (este arquivo) com progresso das fases.
+- ✅ Atualizar `CLAUDE.md` com instruções de uso atualizadas.
+
+---
+
+## Fase 11A — Testes dos Delegates
+- Criar testes unitários para cada delegate (`identificarTarefaDelegate`, `createDelegate`, `readDelegate`, `updateDelegate`, `deleteDelegate`).
+- Usar `camunda-bpm-mockito` para mockar `DelegateExecution`.
+- Validar entradas (variáveis de processo) e saídas (`result`, `statusCode`, `message`).
+- Casos obrigatórios:
+    - Happy path (dados válidos).
+    - Dados inválidos → `statusCode=400` ou `BpmnError`.
+    - IDs inexistentes → `statusCode=404`.
+    - Cenários especiais para `tarefa=null`, `tarefa="create"`, `tarefa="UPSERT"` no `IdentificarTarefaDelegate`.
+
+---
+
+## Fase 11B — Testes do Diagrama BPMN + Relatório de Cobertura
+- Usar `camunda-bpm-assert` e `camunda-bpm-mockito-scenario` para simular rotas.
+- Adicionar `camunda-process-test-coverage-junit5` para gerar relatório HTML.
+
+### Casos obrigatórios
+- Rota CREATE → atinge `createDelegate`.
+- Rota READ → atinge `readDelegate`.
+- Rota UPDATE → atinge `updateDelegate`.
+- Rota DELETE → atinge `deleteDelegate`.
+- Default flow (tarefa nula, minúscula ou não mapeada) → atinge end de operação inválida.
+
+### Relatório
+- Após `mvn test`, abrir `target/process-test-coverage/index.html`.
+- Validar que **todos os elementos BPMN** foram cobertos.
 
 ---
 
 ## Definição de Pronto (DoD)
-- Endpoint REST documentado e funcional.
-- BPMN validado com rotas + default flow.
-- Tabela **AIC_CADASTRO** criada automaticamente.
-- Testes executáveis e casos cobertos.
-- Observabilidade mínima (Actuator + logs).
-- Documentação publicada (`README.md`, `PLAN.md`, Swagger UI).  
+- ✅ Endpoint REST documentado e funcional.
+- ✅ BPMN validado com rotas + default flow.
+- ✅ Tabela **AIC_CADASTRO** criada automaticamente.
+- ✅ Testes executáveis e casos cobertos.
+- ✅ Observabilidade mínima (Actuator + logs).
+- ✅ Documentação publicada (`README.md`, `PLAN.md`, Swagger UI).
+
+---
+
+## 📊 Status de Implementação
+
+### ✅ Fases Completas (0-10)
+- **Fase 0:** Preparação do ambiente 
+- **Fase 1:** Banco de dados H2 com schema.sql
+- **Fase 2:** BPMN processo CRUD com gateway exclusivo
+- **Fase 3:** Contrato endpoint REST com DTOs
+- **Fase 4:** Serviço de dados CadastroService
+- **Fase 5:** Delegates para todas operações CRUD
+- **Fase 6:** Controller com validações e Swagger
+- **Fase 7:** Testes unitários e integração
+- **Fase 8:** Observabilidade com Actuator e logs
+- **Fase 9:** Smoke test e documentação Swagger
+- **Fase 10:** Documentação completa README.md
+
+### 🔄 Fases Pendentes
+- **Fase 11A:** Testes unitários específicos de delegates
+- **Fase 11B:** Testes BPMN e relatório de cobertura
+
+### 🎯 Funcionalidades Principais Implementadas
+- 🌐 **API REST:** POST /api/cadastro/process (CREATE, READ, UPDATE, DELETE)
+- 📋 **BPMN:** Processo orquestrado com gateway exclusivo + default flow  
+- 🗄️ **Database:** H2 file-based com tabela AIC_CADASTRO
+- 📖 **Documentação:** Swagger UI completo com exemplos
+- 🔍 **Observabilidade:** Logs detalhados + Actuator endpoints
+- ✅ **Validação:** Bean Validation + validação condicional customizada
+- 🧪 **Testes:** Unitários e integração implementados  

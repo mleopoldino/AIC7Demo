@@ -80,7 +80,7 @@ AIC7Demo/
 # Compilar o projeto
 mvn compile
 
-# Executar a aplicação
+# Executar a aplicação (porta 8081)
 mvn spring-boot:run
 
 # Empacotar a aplicação
@@ -92,11 +92,32 @@ mvn clean package
 
 ### Testes
 ```bash
-# Executar testes (atualmente não há testes implementados)
+# Executar testes unitários e de integração
 mvn test
 
-# Executar testes com coverage
+# Executar testes com coverage (se configurado)
 mvn test jacoco:report
+```
+
+### URLs Importantes (após mvn spring-boot:run)
+```bash
+# Aplicação principal
+http://localhost:8081
+
+# Swagger UI - Documentação da API
+http://localhost:8081/swagger-ui/index.html
+
+# H2 Database Console (JDBC URL: jdbc:h2:file:./data/camunda-db, user: sa)
+http://localhost:8081/h2-console
+
+# Camunda Cockpit (usuário: demo/demo)
+http://localhost:8081
+
+# Health Check
+http://localhost:8081/actuator/health
+
+# Metrics
+http://localhost:8081/actuator/metrics
 ```
 
 ## Configuração do Camunda
@@ -165,22 +186,68 @@ O projeto inclui um processo BPMN simples (`aic7demo-process`) com:
 - Configure breakpoints em delegates para debugging
 - Monitore logs para troubleshooting
 
+## API REST Implementada
+
+### Endpoint Principal
+- **POST /api/cadastro/process** - Inicia processo BPMN CRUD
+
+### Exemplo de Uso
+```bash
+# CREATE - Criar novo registro
+curl -X POST http://localhost:8081/api/cadastro/process \
+  -H "Content-Type: application/json" \
+  -d '{"tarefa": "CREATE", "payload": {"nome": "João", "email": "joao@teste.com", "idade": 30}}'
+
+# READ - Buscar registro por ID  
+curl -X POST http://localhost:8081/api/cadastro/process \
+  -H "Content-Type: application/json" \
+  -d '{"tarefa": "READ", "id": 1}'
+
+# UPDATE - Atualizar registro
+curl -X POST http://localhost:8081/api/cadastro/process \
+  -H "Content-Type: application/json" \
+  -d '{"tarefa": "UPDATE", "id": 1, "payload": {"nome": "João Silva", "email": "joao.silva@teste.com", "idade": 35}}'
+
+# DELETE - Deletar registro
+curl -X POST http://localhost:8081/api/cadastro/process \
+  -H "Content-Type: application/json" \
+  -d '{"tarefa": "DELETE", "id": 1}'
+```
+
+### Resposta Padrão (202 Accepted)
+```json
+{
+  "processInstanceId": "12345678-1234-1234-1234-123456789012",
+  "businessKey": "1"
+}
+```
+
 ## Arquitetura da Aplicação
 
-### Fluxo de Dados
-1. **Entrada**: Processos iniciados via REST API ou Camunda Admin
-2. **Processamento**: Delegates executam lógica de negócio
-3. **Persistência**: H2 Database armazena estado do workflow
-4. **Saída**: Resultados via API ou interface web
+### Fluxo de Dados CRUD via BPMN
+1. **Entrada**: REST API recebe requisição CRUD
+2. **Orquestração**: Processo BPMN roteia via gateway exclusivo
+3. **Processamento**: Delegates executam operação específica (CREATE/READ/UPDATE/DELETE)
+4. **Persistência**: H2 Database (tabela AIC_CADASTRO)
+5. **Saída**: Resultado retornado via variáveis de processo
+
+### Componentes Principais
+- **ProcessController**: Endpoint REST que inicia processo BPMN
+- **CadastroService**: Lógica de negócio para operações CRUD
+- **Delegates**: Bridge entre BPMN e serviços Java
+- **DTOs**: Transferência de dados (ProcessRequestDto, CadastroDto, etc.)
+- **Global Exception Handler**: Tratamento centralizado de erros
 
 ### Integrações
-- **Spring Boot**: Framework principal para DI e auto-configuração
-- **Camunda**: Engine de workflow e interface de administração
-- **H2**: Persistência simples para desenvolvimento/demo
-- **Lombok**: Redução de boilerplate de código
+- **Spring Boot 3.3.0**: Framework principal
+- **Camunda BPM 7.23.0**: Engine de workflow BPMN
+- **H2 Database**: Persistência file-based
+- **Swagger/OpenAPI**: Documentação automática da API
+- **Spring Boot Actuator**: Observabilidade (health, metrics)
 
 ### Pontos de Extensão
 - Adicione delegates em `camunda.delegate` para novas service tasks
 - Implemente listeners em `camunda.handler` para eventos
-- Configure external task workers em `camunda.external`
+- Configure external task workers em `camunda.external`  
 - Adicione serviços de negócio em `core.service`
+- Estenda validações em `core.validation`

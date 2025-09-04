@@ -15,3 +15,9 @@ server:
 camunda.bpm.admin-user:
   id: demo
   password: demo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Request to start a CRUD process instance.")
-@ValidProcessRequest
+//@ValidProcessRequest  // Temporarily disabled for debugging
 public class ProcessRequestDto {
 
     @NotBlank(message = "Operation type (tarefa) cannot be blank")

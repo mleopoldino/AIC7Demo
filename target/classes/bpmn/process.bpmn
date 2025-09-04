@@ -108,7 +108,7 @@ Retorno final para o chamador ou sistema de orquestração.</bpmn:documentation>
       <bpmn:incoming>Flow_0wt3ckm</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="IdentificarTarefaTask" targetRef="TipoTarefaSolicitadaGateway" />
-    <bpmn:serviceTask id="IdentificarTarefaTask" name="Identificar tarefa" camunda:delegateExpression="${identificarTarefaDelegate}">
+    <bpmn:serviceTask id="IdentificarTarefaTask" name="Identificar tarefa" camunda:delegateExpression="${identificarTarefaDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
       <bpmn:documentation>Service Task – Identificar tarefa
 
 Descrição:
@@ -183,7 +183,7 @@ Deve direcionar para tratamento de “Operação inválida”.</bpmn:documentati
     <bpmn:sequenceFlow id="Flow_0go8x0z" sourceRef="READTask" targetRef="Event_1nc0ity" />
     <bpmn:sequenceFlow id="Flow_0mf7bw0" sourceRef="UPDATETask" targetRef="Event_1d2hkho" />
     <bpmn:sequenceFlow id="Flow_0xsodm3" sourceRef="DELETETask" targetRef="Event_1hjti9i" />
-    <bpmn:serviceTask id="CREATETask" name="CREATE" camunda:delegateExpression="${createDelegate}">
+    <bpmn:serviceTask id="CREATETask" name="CREATE" camunda:delegateExpression="${createDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
       <bpmn:documentation>Service Task – CREATE
 
 Descrição:
@@ -209,7 +209,7 @@ Conflito por recurso já existente.</bpmn:documentation>
       <bpmn:incoming>CreateSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0qtmrq3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="READTask" name="READ" camunda:delegateExpression="${readDelegate}">
+    <bpmn:serviceTask id="READTask" name="READ" camunda:delegateExpression="${readDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
       <bpmn:documentation>Service Task – READ
 
 Descrição:
@@ -235,7 +235,7 @@ Problema de conexão com base de dados ou serviço externo.</bpmn:documentation>
       <bpmn:incoming>ReadSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0go8x0z</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="UPDATETask" name="UPDATE" camunda:delegateExpression="${updateDelegate}">
+    <bpmn:serviceTask id="UPDATETask" name="UPDATE" camunda:delegateExpression="${updateDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
       <bpmn:documentation>Service Task – UPDATE
 
 Descrição:
@@ -267,7 +267,7 @@ Retornar 409 Conflict em caso de duplicidade.</bpmn:documentation>
       <bpmn:incoming>UpdateSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0mf7bw0</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="DELETETask" name="DELETE" camunda:delegateExpression="${deleteDelegate}">
+    <bpmn:serviceTask id="DELETETask" name="DELETE" camunda:delegateExpression="${deleteDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
       <bpmn:documentation>Service Task – DELETE
 
 Descrição:

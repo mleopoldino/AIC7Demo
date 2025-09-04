@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,43 @@ public class ProcessController {
                     @ApiResponse(responseCode = "400", description = "Invalid request payload"),
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             })
-    public ResponseEntity<ProcessResponseDto> startProcess(@Valid @RequestBody ProcessRequestDto request) {
+    public ResponseEntity<ProcessResponseDto> startProcess(
+            @Valid
+            @RequestBody(
+                    description = "Request to start a CRUD process instance",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Create Example",
+                                            summary = "Example for CREATE operation",
+                                            value = "{\"tarefa\": \"CREATE\", \"payload\": {\"nome\": \"Novo Registro\", \"email\": \"novo@example.com\", \"idade\": 30}}"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Read Example",
+                                            summary = "Example for READ operation",
+                                            value = "{\"tarefa\": \"READ\", \"id\": 1}"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Update Example",
+                                            summary = "Example for UPDATE operation",
+                                            value = "{\"tarefa\": \"UPDATE\", \"id\": 1, \"payload\": {\"nome\": \"Registro Atualizado\", \"email\": \"atualizado@example.com\", \"idade\": 35}}"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Delete Example",
+                                            summary = "Example for DELETE operation",
+                                            value = "{\"tarefa\": \"DELETE\", \"id\": 1}"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Invalid Operation Example",
+                                            summary = "Example for an invalid operation (should trigger default flow)",
+                                            value = "{\"tarefa\": \"UPSERT\", \"id\": 999, \"payload\": {\"nome\": \"Teste Invalido\", \"email\": \"invalido@example.com\", \"idade\": 10}}"
+                                    )
+                            }
+                    )
+            )
+            ProcessRequestDto request) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("tarefa", request.getTarefa());
         variables.put("id", request.getId());

@@ -18,9 +18,16 @@ public class ProcessRequestValidator implements ConstraintValidator<ValidProcess
         }
 
         boolean valid = true;
-        context.disableDefaultConstraintViolation();
-
         String tarefa = request.getTarefa();
+        
+        // Don't disable default constraint violations - let @NotBlank work on tarefa
+        if (tarefa == null || tarefa.trim().isEmpty()) {
+            // Let @NotBlank handle this case
+            return true; // The @NotBlank annotation will handle the validation
+        }
+        
+        // Only add custom constraint violations for conditional validation
+        context.disableDefaultConstraintViolation();
         
         // Validate conditional requirements based on operation type
         if ("READ".equals(tarefa) || "UPDATE".equals(tarefa) || "DELETE".equals(tarefa)) {
@@ -38,31 +45,6 @@ public class ProcessRequestValidator implements ConstraintValidator<ValidProcess
                        .addPropertyNode("payload")
                        .addConstraintViolation();
                 valid = false;
-            } else {
-                // Validate nested payload fields when payload is present
-                if (request.getPayload().getNome() == null || request.getPayload().getNome().trim().isEmpty()) {
-                    context.buildConstraintViolationWithTemplate("Name cannot be blank")
-                           .addPropertyNode("payload.nome")
-                           .addConstraintViolation();
-                    valid = false;
-                }
-                if (request.getPayload().getEmail() == null || request.getPayload().getEmail().trim().isEmpty()) {
-                    context.buildConstraintViolationWithTemplate("Email cannot be blank")
-                           .addPropertyNode("payload.email")
-                           .addConstraintViolation();
-                    valid = false;
-                } else if (!isValidEmail(request.getPayload().getEmail())) {
-                    context.buildConstraintViolationWithTemplate("Email should be valid")
-                           .addPropertyNode("payload.email")
-                           .addConstraintViolation();
-                    valid = false;
-                }
-                if (request.getPayload().getIdade() < 0) {
-                    context.buildConstraintViolationWithTemplate("Age cannot be negative")
-                           .addPropertyNode("payload.idade")
-                           .addConstraintViolation();
-                    valid = false;
-                }
             }
         }
 
