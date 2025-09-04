@@ -1,1 +1,5 @@
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/Application.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/controller/ProcessController.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/PayloadDto.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/ProcessRequestDto.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/ProcessResponseDto.java

@@ -1,1 +1,5 @@
+com/mls/workflow/controller/ProcessController.class
 com/mls/workflow/Application.class
+com/mls/workflow/core/dto/PayloadDto.class
+com/mls/workflow/core/dto/ProcessRequestDto.class
+com/mls/workflow/core/dto/ProcessResponseDto.class

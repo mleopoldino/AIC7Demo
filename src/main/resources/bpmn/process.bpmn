@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.38.1">
-  <bpmn:process id="Demo AI Project - CRUD" name="Demo AI Project - CRUD" isExecutable="true" camunda:versionTag="1.0" camunda:historyTimeToLive="180" camunda:isStartableInTasklist="false">
+  <bpmn:process id="DemoAIProjectCRUDProcess" name="Demo AI Project - CRUD" isExecutable="true" camunda:versionTag="1.0" camunda:historyTimeToLive="180" camunda:isStartableInTasklist="false">
     <bpmn:documentation>Documentação do Processo BPMN – CRUD
 
 Nome do Processo: Solicitação de recurso CRUD
