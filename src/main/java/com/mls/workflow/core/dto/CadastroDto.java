@@ -5,8 +5,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+
 @Schema(description = "Data Transfer Object for Cadastro (Registration) entity.")
-public class CadastroDto {
+public class CadastroDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Schema(description = "Unique identifier of the registration.", example = "1")
     private Long id;

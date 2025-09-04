@@ -1,7 +1,12 @@
 com/mls/workflow/core/dto/PayloadDtoValidationTest.class
 com/mls/workflow/camunda/delegate/IdentificarTarefaDelegateTest.class
+com/mls/workflow/WebMvcSimpleTest.class
+com/mls/workflow/controller/v1/CadastroControllerV1IntegrationTest.class
 com/mls/workflow/core/service/CadastroServiceTest.class
-com/mls/workflow/controller/ProcessControllerIntegrationTest.class
+com/mls/workflow/core/validation/v1/AtLeastOneFieldValidatorTest.class
 com/mls/workflow/core/dto/ProcessRequestValidationTest.class
 com/mls/workflow/controller/ProcessControllerTest.class
+com/mls/workflow/SimpleJsonTest.class
+com/mls/workflow/controller/ProcessControllerIntegrationTest.class
+com/mls/workflow/core/dto/JsonBindingDebugTest.class
 com/mls/workflow/controller/ProcessControllerIT.class

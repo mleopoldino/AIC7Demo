@@ -10,148 +10,20 @@ Descrição Geral
 
 O processo inicia com a recepção de uma solicitação CRUD, onde é definida a operação desejada por meio da variável de processo tarefa. Em seguida, um gateway exclusivo (XOR) avalia o tipo de operação solicitado e direciona o fluxo para a Service Task correspondente: CREATE, READ, UPDATE ou DELETE.
 
-Cada tarefa de serviço é responsável por executar a operação no recurso indicado. Após a execução, o processo converge em um novo gateway e finaliza com o end event “Recurso Processado”, indicando que a solicitação foi concluída.
-
-Fluxo Detalhado
-
-Start Event – Solicitação de recurso CRUD
-
-Início do processo a partir de uma requisição externa.
-
-Variável principal: tarefa (valores esperados: CREATE, READ, UPDATE, DELETE).
-
-Service Task – Identificar tarefa
-
-Realiza a leitura da variável tarefa.
-
-Pode incluir validações básicas.
-
-Exclusive Gateway – Tipo Tarefa Solicitada?
-
-Roteia o processo para a operação correspondente:
-
-CREATE: ${"CREATE".equals(tarefa)}
-
-READ: ${"READ".equals(tarefa)}
-
-UPDATE: ${"UPDATE".equals(tarefa)}
-
-DELETE: ${"DELETE".equals(tarefa)}
-
-Caso tarefa seja inválida, deve existir um fluxo default (não representado no diagrama atual).
-
-Service Tasks – Operações CRUD
-
-CREATE: Cria um novo recurso com base nos dados fornecidos.
-
-READ: Recupera informações de um recurso existente.
-
-UPDATE: Atualiza um recurso existente com novos dados.
-
-DELETE: Remove um recurso identificado.
-
-Exclusive Gateway – Convergência
-
-Reúne os caminhos das quatro operações em um único ponto.
-
-End Event – Recurso Processado
-
-Indica que o recurso foi tratado de acordo com a solicitação.
-
-Pode incluir status ou mensagem de saída.</bpmn:documentation>
+Cada tarefa de serviço é responsável por executar a operação no recurso indicado. Após a execução, o processo converge em um novo gateway e finaliza com o end event “Recurso Processado”, indicando que a solicitação foi concluída.</bpmn:documentation>
     <bpmn:startEvent id="SolicitacaoDeRecursoCRUDStartEvent" name="Solicitação de recurso CRUD">
-      <bpmn:documentation>Start Event – Solicitação de recurso CRUD
-
-Nome do Evento: Solicitação de recurso CRUD
-
-Descrição:
-Ponto inicial do processo. Representa o recebimento de uma requisição para realizar uma operação de Create, Read, Update ou Delete em um recurso de negócio.
-
-Entradas esperadas:
-
-tarefa (String) → Define a operação desejada. Valores válidos: "CREATE", "READ", "UPDATE", "DELETE".
-
-resourceId (String/Long, opcional) → Necessário em operações READ, UPDATE e DELETE.
-
-payload (Map/JSON, opcional) → Necessário em operações CREATE e UPDATE.
-
-correlationId (String, opcional) → Usado para rastreabilidade da requisição.
-
-Comportamento:
-Ao ser acionado, o processo é instanciado e a variável tarefa determina o caminho que será seguido pelo gateway condicional.
-
-Pré-condições:
-
-A variável tarefa deve estar preenchida corretamente.
-
-Caso tarefa seja nula ou inválida, o processo deverá prever um caminho default no gateway para tratamento da exceção.
-
-Saídas:
-
-Inicialização das variáveis do processo que serão consumidas pelas próximas tarefas.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_1fp17al</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1fp17al" sourceRef="SolicitacaoDeRecursoCRUDStartEvent" targetRef="IdentificarTarefaTask" />
     <bpmn:endEvent id="RecursoProcessadoEndEvent" name="Recurso Processado">
-      <bpmn:documentation>End Event – Recurso Processado
-
-Descrição:
-Encerramento do processo após execução da operação CRUD.
-
-Entradas:
-
-Variáveis geradas pelas Service Tasks (statusCode, message, result).
-
-Saídas:
-
-Retorno final para o chamador ou sistema de orquestração.</bpmn:documentation>
       <bpmn:incoming>Flow_0wt3ckm</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="IdentificarTarefaTask" targetRef="TipoTarefaSolicitadaGateway" />
-    <bpmn:serviceTask id="IdentificarTarefaTask" name="Identificar tarefa" camunda:delegateExpression="${identificarTarefaDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
-      <bpmn:documentation>Service Task – Identificar tarefa
-
-Descrição:
-Responsável por ler a variável tarefa recebida na requisição e preparar o processo para roteamento.
-
-Entradas:
-
-tarefa (String) – operação solicitada: “CREATE”, “READ”, “UPDATE” ou “DELETE”.
-
-resourceId (opcional, String/Long) – usado em READ, UPDATE, DELETE.
-
-payload (opcional, Map/JSON) – usado em CREATE, UPDATE.
-
-Saídas:
-
-Nenhuma transformação; apenas garante que a variável tarefa está disponível para o Gateway.
-
-Erros possíveis:
-
-tarefa nula ou inválida → direcionamento incorreto no gateway.
-
-Observação:</bpmn:documentation>
+    <bpmn:serviceTask id="IdentificarTarefaTask" name="Identificar tarefa" camunda:delegateExpression="${identificarTarefaDelegate}">
       <bpmn:incoming>SequenceFlow_1fp17al</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_16gzt2m</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="TipoTarefaSolicitadaGateway" name="Tipo Tarefa Solicitada?">
-      <bpmn:documentation>Exclusive Gateway – Tipo Tarefa Solicitada?
-
-Descrição:
-Avalia a variável tarefa e direciona para a Service Task correta.
-
-Condições configuradas:
-
-CREATE → ${"CREATE".equals(tarefa)}
-
-READ → ${"READ".equals(tarefa)}
-
-UPDATE → ${"UPDATE".equals(tarefa)}
-
-DELETE → ${"DELETE".equals(tarefa)}
-
-Default flow:
-Deve direcionar para tratamento de “Operação inválida”.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
       <bpmn:outgoing>CreateSequenceFlow</bpmn:outgoing>
       <bpmn:outgoing>ReadSequenceFlow</bpmn:outgoing>
@@ -159,174 +31,50 @@ Deve direcionar para tratamento de “Operação inválida”.</bpmn:documentati
       <bpmn:outgoing>DeleteSequenceFlow</bpmn:outgoing>
       <bpmn:outgoing>OperacaoInvalidaSequenceFlow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="CreateSequenceFlow" name="Create" sourceRef="TipoTarefaSolicitadaGateway" targetRef="CREATETask">
+    <bpmn:sequenceFlow id="CreateSequenceFlow" name="Fluxo de Criação" sourceRef="TipoTarefaSolicitadaGateway" targetRef="CREATETask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "CREATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0qtmrq3" sourceRef="CREATETask" targetRef="Event_0850x8l" />
-    <bpmn:sequenceFlow id="ReadSequenceFlow" name="Read" sourceRef="TipoTarefaSolicitadaGateway" targetRef="READTask">
+    <bpmn:sequenceFlow id="ReadSequenceFlow" name="Fluxo de Leitura" sourceRef="TipoTarefaSolicitadaGateway" targetRef="READTask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "READ"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="UpdateSequenceFlow" name="Update" sourceRef="TipoTarefaSolicitadaGateway" targetRef="UPDATETask">
+    <bpmn:sequenceFlow id="UpdateSequenceFlow" name="Fluxo de Atualização" sourceRef="TipoTarefaSolicitadaGateway" targetRef="UPDATETask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "UPDATE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="DeleteSequenceFlow" name="Delete" sourceRef="TipoTarefaSolicitadaGateway" targetRef="DELETETask">
+    <bpmn:sequenceFlow id="DeleteSequenceFlow" name="Fluxo de Exclusão" sourceRef="TipoTarefaSolicitadaGateway" targetRef="DELETETask">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tarefa == "DELETE"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="GatewayJoin">
-      <bpmn:incoming>Flow_0feqy92</bpmn:incoming>
-      <bpmn:incoming>Flow_1poflc3</bpmn:incoming>
-      <bpmn:incoming>Flow_0r3aiyk</bpmn:incoming>
-      <bpmn:incoming>Flow_0ddmezd</bpmn:incoming>
+      <bpmn:incoming>Flow_0qtmrq3</bpmn:incoming>
+      <bpmn:incoming>Flow_0go8x0z</bpmn:incoming>
+      <bpmn:incoming>Flow_0mf7bw0</bpmn:incoming>
+      <bpmn:incoming>Flow_0xsodm3</bpmn:incoming>
       <bpmn:outgoing>Flow_0wt3ckm</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0wt3ckm" sourceRef="GatewayJoin" targetRef="RecursoProcessadoEndEvent" />
-    <bpmn:sequenceFlow id="Flow_0go8x0z" sourceRef="READTask" targetRef="Event_1nc0ity" />
-    <bpmn:sequenceFlow id="Flow_0mf7bw0" sourceRef="UPDATETask" targetRef="Event_1d2hkho" />
-    <bpmn:sequenceFlow id="Flow_0xsodm3" sourceRef="DELETETask" targetRef="Event_1hjti9i" />
-    <bpmn:serviceTask id="CREATETask" name="CREATE" camunda:delegateExpression="${createDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
-      <bpmn:documentation>Service Task – CREATE
-
-Descrição:
-Cria um novo recurso no sistema a partir do payload informado.
-
-Entradas:
-
-payload (Map/JSON) – dados necessários para criação do recurso.
-
-Saídas:
-
-result (Map/JSON) – objeto criado com identificador único.
-
-statusCode = 201.
-
-message = “Recurso criado com sucesso”.
-
-Erros possíveis:
-
-Falha de validação dos dados.
-
-Conflito por recurso já existente.</bpmn:documentation>
+    <bpmn:serviceTask id="CREATETask" name="CREATE" camunda:delegateExpression="${createDelegate}">
       <bpmn:incoming>CreateSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0qtmrq3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="READTask" name="READ" camunda:delegateExpression="${readDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
-      <bpmn:documentation>Service Task – READ
-
-Descrição:
-Recupera informações de um recurso já existente.
-
-Entradas:
-
-resourceId (String/Long) – identificador do recurso.
-
-Saídas:
-
-result (Map/JSON) – dados do recurso.
-
-statusCode = 200 (OK) ou 404 (Not Found).
-
-message = mensagem contextual (“Recurso encontrado” ou “Recurso não encontrado”).
-
-Erros possíveis:
-
-Recurso não encontrado (404).
-
-Problema de conexão com base de dados ou serviço externo.</bpmn:documentation>
+    <bpmn:serviceTask id="READTask" name="READ" camunda:delegateExpression="${readDelegate}">
       <bpmn:incoming>ReadSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0go8x0z</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="UPDATETask" name="UPDATE" camunda:delegateExpression="${updateDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
-      <bpmn:documentation>Service Task – UPDATE
-
-Descrição:
-Atualiza um recurso existente com os dados enviados.
-
-Entradas:
-
-resourceId (String/Long) – identificador do recurso a ser atualizado.
-
-payload (Map/JSON) – novos valores para atualização.
-
-Saídas:
-
-result (Map/JSON) – recurso atualizado.
-
-statusCode = 200 (OK) ou 204 (sem conteúdo).
-
-message = “Recurso atualizado com sucesso”.
-
-Erros possíveis:
-
-Recurso não encontrado.
-
-Conflito de dados (ex.: violação de chave única).
-
-Tratamento sugerido:
-
-Retornar 409 Conflict em caso de duplicidade.</bpmn:documentation>
+    <bpmn:serviceTask id="UPDATETask" name="UPDATE" camunda:delegateExpression="${updateDelegate}">
       <bpmn:incoming>UpdateSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0mf7bw0</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="DELETETask" name="DELETE" camunda:delegateExpression="${deleteDelegate}" camunda:asyncBefore="true" camunda:failedJobRetryTimeCycle="R3/PT1M">
-      <bpmn:documentation>Service Task – DELETE
-
-Descrição:
-Remove um recurso existente identificado pelo resourceId.
-
-Entradas:
-
-resourceId (String/Long) – identificador do recurso a ser removido.
-
-Saídas:
-
-statusCode = 204 (No Content).
-
-message = “Recurso removido com sucesso”.
-
-Erros possíveis:
-
-Recurso não encontrado (404).
-
-Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentation>
+    <bpmn:serviceTask id="DELETETask" name="DELETE" camunda:delegateExpression="${deleteDelegate}">
       <bpmn:incoming>DeleteSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_0xsodm3</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="OperacaoInvalidaEndEvent" name="Operação invalida">
       <bpmn:incoming>OperacaoInvalidaSequenceFlow</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="OperacaoInvalidaSequenceFlow" name="Operação Invalida" sourceRef="TipoTarefaSolicitadaGateway" targetRef="OperacaoInvalidaEndEvent" />
-    <bpmn:sequenceFlow id="Flow_0feqy92" sourceRef="Event_0850x8l" targetRef="GatewayJoin" />
-    <bpmn:intermediateCatchEvent id="Event_0850x8l">
-      <bpmn:incoming>Flow_0qtmrq3</bpmn:incoming>
-      <bpmn:outgoing>Flow_0feqy92</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0x286eo">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_1poflc3" sourceRef="Event_1nc0ity" targetRef="GatewayJoin" />
-    <bpmn:intermediateCatchEvent id="Event_1nc0ity">
-      <bpmn:incoming>Flow_0go8x0z</bpmn:incoming>
-      <bpmn:outgoing>Flow_1poflc3</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1ogpvs1">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_0r3aiyk" sourceRef="Event_1d2hkho" targetRef="GatewayJoin" />
-    <bpmn:intermediateCatchEvent id="Event_1d2hkho">
-      <bpmn:incoming>Flow_0mf7bw0</bpmn:incoming>
-      <bpmn:outgoing>Flow_0r3aiyk</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1dw0mkg">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_0ddmezd" sourceRef="Event_1hjti9i" targetRef="GatewayJoin" />
-    <bpmn:intermediateCatchEvent id="Event_1hjti9i">
-      <bpmn:incoming>Flow_0xsodm3</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ddmezd</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1hryufb">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="OperacaoInvalidaSequenceFlow" name="Operação Inválida" sourceRef="TipoTarefaSolicitadaGateway" targetRef="OperacaoInvalidaEndEvent" />
+    <bpmn:sequenceFlow id="Flow_0qtmrq3" sourceRef="CREATETask" targetRef="GatewayJoin" />
+    <bpmn:sequenceFlow id="Flow_0go8x0z" sourceRef="READTask" targetRef="GatewayJoin" />
+    <bpmn:sequenceFlow id="Flow_0mf7bw0" sourceRef="UPDATETask" targetRef="GatewayJoin" />
+    <bpmn:sequenceFlow id="Flow_0xsodm3" sourceRef="DELETETask" targetRef="GatewayJoin" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DemoAIProjectCRUDProcess">
@@ -358,30 +106,18 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
         <dc:Bounds x="590" y="420" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="RecursoProcessadoEndEvent">
-        <dc:Bounds x="1042" y="99" width="36" height="36" />
+        <dc:Bounds x="862" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1031" y="142" width="59" height="27" />
+          <dc:Bounds x="851" y="142" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1j0wo5c_di" bpmnElement="GatewayJoin" isMarkerVisible="true">
-        <dc:Bounds x="865" y="92" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0l4eang_di" bpmnElement="Event_0850x8l">
-        <dc:Bounds x="752" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1sgyxmn_di" bpmnElement="Event_1nc0ity">
-        <dc:Bounds x="752" y="222" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1lwg7x6_di" bpmnElement="Event_1d2hkho">
-        <dc:Bounds x="752" y="332" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_165hqeg_di" bpmnElement="Event_1hjti9i">
-        <dc:Bounds x="752" y="442" width="36" height="36" />
+        <dc:Bounds x="755" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_102nsqh_di" bpmnElement="OperacaoInvalidaEndEvent">
-        <dc:Bounds x="752" y="542" width="36" height="36" />
+        <dc:Bounds x="522" y="542" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="726" y="585" width="89" height="14" />
+          <dc:Bounds x="496" y="585" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
@@ -396,19 +132,15 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
         <di:waypoint x="485" y="117" />
         <di:waypoint x="590" y="117" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="521" y="99" width="34" height="14" />
+          <dc:Bounds x="500" y="99" width="80" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qtmrq3_di" bpmnElement="Flow_0qtmrq3">
-        <di:waypoint x="690" y="117" />
-        <di:waypoint x="752" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0807ecl_di" bpmnElement="ReadSequenceFlow">
         <di:waypoint x="460" y="142" />
         <di:waypoint x="460" y="240" />
         <di:waypoint x="590" y="240" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="525" y="223" width="27" height="14" />
+          <dc:Bounds x="495" y="223" width="70" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0f3y115_di" bpmnElement="UpdateSequenceFlow">
@@ -416,7 +148,7 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
         <di:waypoint x="460" y="350" />
         <di:waypoint x="590" y="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="520" y="333" width="36" height="14" />
+          <dc:Bounds x="480" y="333" width="80" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hn360o_di" bpmnElement="DeleteSequenceFlow">
@@ -424,51 +156,39 @@ Restrições de integridade (ex.: recurso vinculado a outros).</bpmn:documentati
         <di:waypoint x="460" y="460" />
         <di:waypoint x="590" y="460" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="522" y="433" width="32" height="14" />
+          <dc:Bounds x="490" y="443" width="80" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wt3ckm_di" bpmnElement="Flow_0wt3ckm">
-        <di:waypoint x="915" y="117" />
-        <di:waypoint x="1042" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0go8x0z_di" bpmnElement="Flow_0go8x0z">
-        <di:waypoint x="690" y="240" />
-        <di:waypoint x="752" y="240" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mf7bw0_di" bpmnElement="Flow_0mf7bw0">
-        <di:waypoint x="690" y="350" />
-        <di:waypoint x="752" y="350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0xsodm3_di" bpmnElement="Flow_0xsodm3">
-        <di:waypoint x="690" y="460" />
-        <di:waypoint x="752" y="460" />
+        <di:waypoint x="805" y="117" />
+        <di:waypoint x="862" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0h86li4_di" bpmnElement="OperacaoInvalidaSequenceFlow">
         <di:waypoint x="460" y="142" />
         <di:waypoint x="460" y="560" />
-        <di:waypoint x="752" y="560" />
+        <di:waypoint x="522" y="560" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="508" y="533" width="90" height="14" />
+          <dc:Bounds x="465" y="533" width="80" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0feqy92_di" bpmnElement="Flow_0feqy92">
-        <di:waypoint x="788" y="117" />
-        <di:waypoint x="865" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0qtmrq3_di" bpmnElement="Flow_0qtmrq3">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="755" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1poflc3_di" bpmnElement="Flow_1poflc3">
-        <di:waypoint x="788" y="240" />
-        <di:waypoint x="890" y="240" />
-        <di:waypoint x="890" y="142" />
+      <bpmndi:BPMNEdge id="Flow_0go8x0z_di" bpmnElement="Flow_0go8x0z">
+        <di:waypoint x="690" y="240" />
+        <di:waypoint x="780" y="240" />
+        <di:waypoint x="780" y="142" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r3aiyk_di" bpmnElement="Flow_0r3aiyk">
-        <di:waypoint x="788" y="350" />
-        <di:waypoint x="890" y="350" />
-        <di:waypoint x="890" y="142" />
+      <bpmndi:BPMNEdge id="Flow_0mf7bw0_di" bpmnElement="Flow_0mf7bw0">
+        <di:waypoint x="690" y="350" />
+        <di:waypoint x="780" y="350" />
+        <di:waypoint x="780" y="142" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ddmezd_di" bpmnElement="Flow_0ddmezd">
-        <di:waypoint x="788" y="460" />
-        <di:waypoint x="890" y="460" />
-        <di:waypoint x="890" y="142" />
+      <bpmndi:BPMNEdge id="Flow_0xsodm3_di" bpmnElement="Flow_0xsodm3">
+        <di:waypoint x="690" y="460" />
+        <di:waypoint x="780" y="460" />
+        <di:waypoint x="780" y="142" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

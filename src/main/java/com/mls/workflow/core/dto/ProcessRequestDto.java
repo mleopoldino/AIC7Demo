@@ -59,4 +59,13 @@ public class ProcessRequestDto {
     public void setPayload(PayloadDto payload) {
         this.payload = payload;
     }
+
+    @Override
+    public String toString() {
+        return "ProcessRequestDto{" +
+                "tarefa='" + tarefa + '\'' +
+                ", id=" + id +
+                ", payload=" + payload +
+                '}';
+    }
 }

@@ -7,13 +7,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.ExampleObject; // Keep this import for Swagger examples
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*; // This imports Spring's @RequestBody
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -21,9 +24,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cadastro")
-@Tag(name = "Process Controller", description = "Endpoints for starting and managing BPMN processes.")
+@Tag(name = "Process Controller (Legacy)", description = "Endpoints for starting and managing BPMN processes.")
+@Deprecated(since = "1.1.0", forRemoval = true)
 public class ProcessController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessController.class);
     private final RuntimeService runtimeService;
 
     @Autowired
@@ -32,8 +37,25 @@ public class ProcessController {
     }
 
     @PostMapping("/process")
-    @Operation(summary = "Start a CRUD process instance",
-            description = "Starts a new instance of the 'Demo AI Project - CRUD' BPMN process.",
+    @Operation(summary = "Execute CRUD operations via BPMN process (DEPRECATED)",
+            description = "DEPRECATED: Use the new /api/v1/cadastro endpoints. This endpoint will be removed in a future version. Executes CREATE, READ, UPDATE or DELETE operations via BPMN workflow. The operation type is determined by the 'tarefa' field in the request payload.",
+            deprecated = true,
+            requestBody = @RequestBody(
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProcessRequestDto.class),
+                    examples = {
+                        @ExampleObject(name = "CREATE", summary = "Create new record",
+                            value = "{\n  \"tarefa\": \"CREATE\",\n  \"payload\": {\n    \"nome\": \"João Silva\",\n    \"email\": \"joao@teste.com\",\n    \"idade\": 30\n  }\n}"),
+                        @ExampleObject(name = "READ", summary = "Read record by ID",
+                            value = "{\n  \"tarefa\": \"read\",\n  \"id\": 1\n}"),
+                        @ExampleObject(name = "UPDATE", summary = "Update existing record",
+                            value = "{\n  \"tarefa\": \"UPDATE\",\n  \"id\": 1,\n  \"payload\": {\n    \"nome\": \"João Silva Santos\",\n    \"email\": \"joao.santos@teste.com\",\n    \"idade\": 35\n  }\n}"),
+                        @ExampleObject(name = "DELETE", summary = "Delete record by ID",
+                            value = "{\n  \"tarefa\": \"DELETE\",\n  \"id\": 1\n}")
+                    }
+                )
+            ),
             responses = {
                     @ApiResponse(responseCode = "202", description = "Process started successfully",
                             content = @Content(mediaType = "application/json",
@@ -44,22 +66,31 @@ public class ProcessController {
             }
     )
     public ResponseEntity<ProcessResponseDto> startProcess(
-            @Valid @RequestBody ProcessRequestDto request) { // Correct Spring @RequestBody
+            @Valid @org.springframework.web.bind.annotation.RequestBody ProcessRequestDto request) {
+
+        LOG.warn("The /api/cadastro/process endpoint is deprecated and will be removed in a future version. Please migrate to the new /api/v1/cadastro endpoints.");
+
         Map<String, Object> variables = new HashMap<>();
         variables.put("tarefa", request.getTarefa());
         variables.put("id", request.getId());
-        variables.put("payload", request.getPayload()); // PayloadDto will be serialized as a Map
+        variables.put("payload", request.getPayload());
 
-        if ("THROW_ERROR".equals(request.getTarefa())) {
-            throw new RuntimeException("Simulated runtime error");
+        // This logic is kept for backward compatibility, but the new V1 controller is preferred.
+        Map<String, Object> processVariables = new HashMap<>();
+        processVariables.put("processVariables", variables);
+
+
+        String businessKey;
+        if ("CREATE".equals(request.getTarefa()) && request.getId() == null) {
+            businessKey = java.util.UUID.randomUUID().toString();
+        } else {
+            businessKey = request.getId() != null ? String.valueOf(request.getId()) : null;
         }
 
-        String businessKey = request.getId() != null ? String.valueOf(request.getId()) : null;
-
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
-                "DemoAIProjectCRUDProcess", // Process Definition Key (ID from BPMN file)
+                "DemoAIProjectCRUDProcess",
                 businessKey,
-                variables
+                processVariables
         );
 
         ProcessResponseDto response = new ProcessResponseDto(processInstance.getId(), processInstance.getBusinessKey());

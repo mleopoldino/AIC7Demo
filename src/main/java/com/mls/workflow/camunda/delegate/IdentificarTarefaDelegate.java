@@ -2,41 +2,49 @@ package com.mls.workflow.camunda.delegate;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 @Component("identificarTarefaDelegate")
 public class IdentificarTarefaDelegate implements JavaDelegate {
 
     private static final Logger LOG = LoggerFactory.getLogger(IdentificarTarefaDelegate.class);
-    private static final List<String> VALID_OPERATIONS = Arrays.asList("CREATE", "READ", "UPDATE", "DELETE");
 
     @Override
+    @SuppressWarnings("unchecked")
     public void execute(DelegateExecution execution) throws Exception {
         String processInstanceId = execution.getProcessInstanceId();
-        String businessKey = execution.getProcessBusinessKey();
         String activityId = execution.getCurrentActivityId();
 
-        LOG.info("[{}] - Activity: {} - Starting IdentificarTarefaDelegate for process instance: {} with business key: {}",
-                activityId, processInstanceId, businessKey);
+        LOG.info("[{}] Activity: {} - Starting IdentificarTarefaDelegate", processInstanceId, activityId);
+
+        // The controller now wraps all parameters in a 'processVariables' map.
+        // This delegate unpacks them into the main process scope.
+        Map<String, Object> processVariables = (Map<String, Object>) execution.getVariable("processVariables");
+
+        if (processVariables == null) {
+            LOG.error("[{}] Activity: {} - 'processVariables' map is missing. This is a configuration error.", processInstanceId, activityId);
+            // Set a failure state
+            execution.setVariable("statusCode", 500);
+            execution.setVariable("message", "Erro interno: Mapa de variáveis do processo não encontrado.");
+            return;
+        }
+
+        LOG.debug("[{}] Activity: {} - Unpacking variables: {}", processInstanceId, activityId, processVariables.keySet());
+
+        // Set all variables from the map into the execution
+        processVariables.forEach(execution::setVariable);
 
         String tarefa = (String) execution.getVariable("tarefa");
-
-        if (tarefa == null || !VALID_OPERATIONS.contains(tarefa.toUpperCase())) {
-            LOG.warn("[{}] - Activity: {} - Invalid operation received: {}. Setting status code 400.",
-                    activityId, processInstanceId, tarefa);
-            execution.setVariable("statusCode", 400);
-            execution.setVariable("message", "Operação inválida. A tarefa deve ser CREATE, READ, UPDATE ou DELETE.");
+        if (tarefa == null) {
+            LOG.warn("[{}] Activity: {} - 'tarefa' variable is null after unpacking.", processInstanceId, activityId);
         } else {
-            LOG.info("[{}] - Activity: {} - Valid operation: {}. Converting to uppercase.",
-                    activityId, processInstanceId, tarefa);
-            execution.setVariable("tarefaNormalizada", tarefa.toUpperCase());
+            LOG.info("[{}] Activity: {} - Operation identified: {}", processInstanceId, activityId, tarefa);
         }
-        LOG.info("[{}] - Activity: {} - Finished IdentificarTarefaDelegate for process instance: {}",
-                activityId, processInstanceId);
+
+        LOG.info("[{}] Activity: {} - Finished IdentificarTarefaDelegate", processInstanceId, activityId);
     }
 }

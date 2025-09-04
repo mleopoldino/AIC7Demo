@@ -2,14 +2,15 @@ package com.mls.workflow.camunda.delegate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mls.workflow.core.dto.CadastroDto;
-import com.mls.workflow.core.dto.PayloadDto;
+import com.mls.workflow.core.dto.v1.UpdateRequestDto;
 import com.mls.workflow.core.service.CadastroService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component("updateDelegate")
 public class UpdateDelegate implements JavaDelegate {
@@ -18,7 +19,6 @@ public class UpdateDelegate implements JavaDelegate {
     private final CadastroService cadastroService;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public UpdateDelegate(CadastroService cadastroService, ObjectMapper objectMapper) {
         this.cadastroService = cadastroService;
         this.objectMapper = objectMapper;
@@ -27,43 +27,52 @@ public class UpdateDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         String processInstanceId = execution.getProcessInstanceId();
-        String businessKey = execution.getProcessBusinessKey();
         String activityId = execution.getCurrentActivityId();
-
-        LOG.info("[{}] - Activity: {} - Starting UpdateDelegate for process instance: {} with business key: {}",
-                activityId, processInstanceId, businessKey);
+        LOG.info("[{}] Activity: {} - Starting UpdateDelegate", processInstanceId, activityId);
 
         Long id = (Long) execution.getVariable("id");
         Object payloadObj = execution.getVariable("payload");
 
         if (id == null || payloadObj == null) {
-            LOG.warn("[{}] - Activity: {} - ID or Payload is missing for UPDATE operation. Setting status code 400.",
-                    activityId, processInstanceId);
+            LOG.warn("[{}] Activity: {} - ID or Payload is missing for UPDATE operation.", processInstanceId, activityId);
             execution.setVariable("statusCode", 400);
             execution.setVariable("message", "ID or Payload is missing for UPDATE operation.");
-            LOG.info("[{}] - Activity: {} - Finished UpdateDelegate for process instance: {}",
-                    activityId, processInstanceId);
+            return;
+        }
+        
+        UpdateRequestDto payload = objectMapper.convertValue(payloadObj, UpdateRequestDto.class);
+
+        // Fetch the existing record
+        Optional<CadastroDto> existingCadastroOpt = cadastroService.read(id);
+
+        if (existingCadastroOpt.isEmpty()) {
+            LOG.warn("[{}] Activity: {} - Record with ID {} not found for update.", processInstanceId, activityId, id);
+            execution.setVariable("statusCode", 404);
+            execution.setVariable("message", "Recurso não encontrado para atualização.");
             return;
         }
 
-        PayloadDto payloadDto = objectMapper.convertValue(payloadObj, PayloadDto.class);
-        CadastroDto cadastroDto = new CadastroDto(id, payloadDto.getNome(), payloadDto.getEmail(), payloadDto.getIdade());
+        CadastroDto existingCadastro = existingCadastroOpt.get();
 
-        LOG.debug("[{}] - Activity: {} - Updating record with ID: {} and data: {}",
-                activityId, processInstanceId, id, payloadDto);
-        CadastroDto updatedCadastro = cadastroService.update(id, cadastroDto);
-
-        if (updatedCadastro != null) {
-            execution.setVariable("result", updatedCadastro);
-            execution.setVariable("statusCode", 200);
-            execution.setVariable("message", "Recurso atualizado com sucesso");
-            LOG.info("[{}] - Activity: {} - Finished UpdateDelegate for process instance: {}. Record updated.",
-                    activityId, processInstanceId);
-        } else {
-            execution.setVariable("statusCode", 404);
-            execution.setVariable("message", "Recurso não encontrado");
-            LOG.warn("[{}] - Activity: {} - Finished UpdateDelegate for process instance: {}. Record with ID {} not found.",
-                    activityId, processInstanceId, id);
+        // Apply changes from DTO
+        if (payload.getNome() != null) {
+            existingCadastro.setNome(payload.getNome());
         }
+        if (payload.getEmail() != null) {
+            existingCadastro.setEmail(payload.getEmail());
+        }
+        if (payload.getIdade() != null) {
+            existingCadastro.setIdade(payload.getIdade());
+        }
+
+        LOG.debug("[{}] Activity: {} - Updating record ID {} with data: {}", processInstanceId, activityId, id, existingCadastro);
+        
+        CadastroDto updatedCadastro = cadastroService.update(id, existingCadastro);
+
+        execution.setVariable("result", updatedCadastro);
+        execution.setVariable("statusCode", 200);
+        execution.setVariable("message", "Recurso atualizado com sucesso");
+
+        LOG.info("[{}] Activity: {} - Finished UpdateDelegate. Record updated.", processInstanceId, activityId);
     }
 }

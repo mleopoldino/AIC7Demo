@@ -6,8 +6,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+
 @Schema(description = "Data payload for the resource.")
-public class PayloadDto {
+public class PayloadDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "Name cannot be blank")
     @Schema(description = "Name of the user.", example = "John Doe", requiredMode = Schema.RequiredMode.REQUIRED)

@@ -143,9 +143,10 @@ class ProcessControllerTest {
 
       ArgumentCaptor<Map> variablesCaptor = ArgumentCaptor.forClass(Map.class);
       verify(runtimeService).startProcessInstanceByKey(anyString(), anyString(), variablesCaptor.capture());
-      assertThat(variablesCaptor.getValue().get("tarefa")).isEqualTo("READ");
-      assertThat(variablesCaptor.getValue().get("id")).isEqualTo(100L);
-      assertThat(variablesCaptor.getValue().get("payload")).isNull();
+      Map<String, Object> processVariables = (Map<String, Object>) variablesCaptor.getValue().get("processVariables");
+      assertThat(processVariables.get("tarefa")).isEqualTo("READ");
+      assertThat(processVariables.get("id")).isEqualTo(100L);
+      assertThat(processVariables.get("payload")).isNull();
   }
 
   @Test
@@ -166,8 +167,9 @@ class ProcessControllerTest {
 
       ArgumentCaptor<Map> variablesCaptor = ArgumentCaptor.forClass(Map.class);
       verify(runtimeService).startProcessInstanceByKey(anyString(), anyString(), variablesCaptor.capture());
-      assertThat(variablesCaptor.getValue().get("tarefa")).isEqualTo("UPDATE");
-      assertThat(variablesCaptor.getValue().get("id")).isEqualTo(200L);
+      Map<String, Object> processVariables = (Map<String, Object>) variablesCaptor.getValue().get("processVariables");
+      assertThat(processVariables.get("tarefa")).isEqualTo("UPDATE");
+      assertThat(processVariables.get("id")).isEqualTo(200L);
   }
 
   @Test
@@ -187,8 +189,9 @@ class ProcessControllerTest {
 
       ArgumentCaptor<Map> variablesCaptor = ArgumentCaptor.forClass(Map.class);
       verify(runtimeService).startProcessInstanceByKey(anyString(), anyString(), variablesCaptor.capture());
-      assertThat(variablesCaptor.getValue().get("tarefa")).isEqualTo("DELETE");
-      assertThat(variablesCaptor.getValue().get("id")).isEqualTo(300L);
-      assertThat(variablesCaptor.getValue().get("payload")).isNull();
+      Map<String, Object> processVariables = (Map<String, Object>) variablesCaptor.getValue().get("processVariables");
+      assertThat(processVariables.get("tarefa")).isEqualTo("DELETE");
+      assertThat(processVariables.get("id")).isEqualTo(300L);
+      assertThat(processVariables.get("payload")).isNull();
   }
 }

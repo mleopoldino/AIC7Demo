@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ class CadastroServiceTest {
     private CadastroService cadastroService;
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreate_ValidCadastro_ShouldReturnCreatedCadastro() {
         CadastroDto newCadastro = new CadastroDto(null, "Teste Novo", "teste@example.com", 28);
         
@@ -38,6 +40,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testRead_ExistingId_ShouldReturnCadastro() {
         Optional<CadastroDto> result = cadastroService.read(1L);
         
@@ -49,6 +52,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testRead_NonExistingId_ShouldReturnEmpty() {
         Optional<CadastroDto> result = cadastroService.read(999L);
         
@@ -56,6 +60,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testUpdate_ExistingId_ShouldUpdateAndReturnCadastro() {
         CadastroDto updatedCadastro = new CadastroDto(null, "João Silva Updated", "joao.updated@example.com", 31);
         
@@ -74,6 +79,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testUpdate_NonExistingId_ShouldReturnNull() {
         CadastroDto updatedCadastro = new CadastroDto(null, "Non Existing", "nonexisting@example.com", 25);
         
@@ -83,6 +89,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testDelete_ExistingId_ShouldReturnTrue() {
         boolean result = cadastroService.delete(2L);
         
@@ -94,6 +101,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testDelete_NonExistingId_ShouldReturnFalse() {
         boolean result = cadastroService.delete(999L);
         
@@ -101,6 +109,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreateAndRead_CompleteCycle_ShouldWork() {
         // Create
         CadastroDto newCadastro = new CadastroDto(null, "Ciclo Completo", "ciclo@example.com", 40);
@@ -128,6 +137,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreate_InvalidCadastro_ShouldThrowConstraintViolationException() {
         // Test with blank name
         CadastroDto invalidCadastro = new CadastroDto(null, "", "valid@example.com", 25);
@@ -138,6 +148,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreate_InvalidEmail_ShouldThrowConstraintViolationException() {
         // Test with invalid email
         CadastroDto invalidCadastro = new CadastroDto(null, "Valid Name", "invalid-email", 25);
@@ -148,6 +159,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreate_NegativeAge_ShouldThrowConstraintViolationException() {
         // Test with negative age
         CadastroDto invalidCadastro = new CadastroDto(null, "Valid Name", "valid@example.com", -5);
@@ -158,6 +170,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCreate_NullCadastro_ShouldThrowConstraintViolationException() {
         // Test with null DTO
         assertThrows(ConstraintViolationException.class, () -> {
@@ -166,6 +179,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testUpdate_InvalidCadastro_ShouldThrowConstraintViolationException() {
         // Test update with invalid data
         CadastroDto invalidCadastro = new CadastroDto(null, "", "invalid-email", -1);
@@ -176,6 +190,7 @@ class CadastroServiceTest {
     }
 
     @Test
+    @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testUpdate_NullId_ShouldThrowConstraintViolationException() {
         CadastroDto validCadastro = new CadastroDto(null, "Valid Name", "valid@example.com", 25);
         
