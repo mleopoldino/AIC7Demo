@@ -1,11 +1,13 @@
 package com.mls.workflow.core.dto;
 
+import com.mls.workflow.core.validation.ValidProcessRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Request to start a CRUD process instance.")
+@ValidProcessRequest
 public class ProcessRequestDto {
 
     @NotBlank(message = "Operation type (tarefa) cannot be blank")

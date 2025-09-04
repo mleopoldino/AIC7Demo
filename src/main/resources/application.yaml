@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:camunda-db
+    url: jdbc:h2:file:./data/camunda-db
   sql:
     init:
       mode: always

@@ -4,9 +4,12 @@
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/IdentificarTarefaDelegate.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/ReadDelegate.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/camunda/delegate/UpdateDelegate.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/config/GlobalExceptionHandler.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/controller/ProcessController.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/CadastroDto.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/PayloadDto.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/ProcessRequestDto.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/dto/ProcessResponseDto.java
 /Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/service/CadastroService.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/validation/ProcessRequestValidator.java
+/Users/marcelo/eclipse-workspace/AIC7Demo/src/main/java/com/mls/workflow/core/validation/ValidProcessRequest.java

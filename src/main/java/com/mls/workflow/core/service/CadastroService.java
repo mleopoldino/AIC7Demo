@@ -8,6 +8,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Validated
 public class CadastroService {
 
     private final JdbcTemplate jdbcTemplate;
@@ -38,7 +43,7 @@ public class CadastroService {
         }
     };
 
-    public CadastroDto create(CadastroDto cadastroDto) {
+    public CadastroDto create(@Valid @NotNull CadastroDto cadastroDto) {
         String sql = "INSERT INTO AIC_CADASTRO (NOME, EMAIL, IDADE) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -65,7 +70,7 @@ public class CadastroService {
         }
     }
 
-    public CadastroDto update(Long id, CadastroDto cadastroDto) {
+    public CadastroDto update(@NotNull Long id, @Valid @NotNull CadastroDto cadastroDto) {
         String sql = "UPDATE AIC_CADASTRO SET NOME = ?, EMAIL = ?, IDADE = ? WHERE ID = ?";
         int affectedRows = jdbcTemplate.update(sql, cadastroDto.getNome(), cadastroDto.getEmail(), cadastroDto.getIdade(), id);
         if (affectedRows == 0) {
